@@ -1,37 +1,38 @@
 import streamlit as st
 import requests
-from bs4 import BeautifulSoup
+import pandas as pd
 
-# Dashboard Layout
-st.set_page_config(page_title="SEO Automation Bot", layout="wide")
-st.title("🤖 Irtaza's SEO Automation Bot")
-st.write("Ye bot aapki site (onlineistikharaexpert.com) ko automate kar raha hai.")
+st.title("🌙 Live SEO Traffic Hunter (Irtaza Fatima)")
 
-url = "https://onlineistikharaexpert.com"
+# 1. Real-time Google Suggestion Scraper
+def get_live_keywords(seed_keyword):
+    # Ye Google ki api se real-time sawal nikaalta hai
+    url = f"http://suggestqueries.google.com/complete/search?client=firefox&q={seed_keyword}"
+    headers = {'User-agent': 'Mozilla/5.0'}
+    response = requests.get(url, headers=headers)
+    suggestions = response.json()[1]
+    return suggestions
 
-# 1. Automatic Site Audit
-st.subheader("🔍 Automated Health Check")
-try:
-    response = requests.get(url, timeout=10)
-    if response.status_code == 200:
-        st.success("✅ Site Online Hai. Python ne check kar liya hai.")
-    else:
-        st.error(f"❌ Site mein masla hai! Status Code: {response.status_code}")
-except:
-    st.error("❌ Site load nahi ho rahi!")
+st.subheader("🔥 Log Google par kya dhoond rahe hain?")
+main_topic = st.text_input("Topic likhen (maslan: Istikhara):", "Istikhara")
 
-# 2. Python's Smart Keyword Suggestion (Targeted for Istikhara)
-st.subheader("📈 Aaj ka Kaam (Python Recommendation)")
-keywords = ["Istikhara for Marriage", "Online Istikhara via WhatsApp", "Istikhara for Business Success", "Dua for Istikhara"]
+if st.button("Asli Data Nikalo"):
+    with st.spinner('Python Google se data nikaal raha hai...'):
+        results = get_live_keywords(main_topic)
+        
+        if results:
+            st.success(f"Python ne '{main_topic}' ke bare mein ye 10 sawal dhoonde hain:")
+            for i, res in enumerate(results):
+                st.write(f"{i+1}. **{res}**")
+            
+            st.info("💡 Advice: In mein se kisi ek par 5 lines WordPress par likh den.")
+        else:
+            st.error("Data nahi mil saka.")
 
-st.info("Python ne trend check kiya hai. Aaj in keywords par traffic zyada hai:")
-for kw in keywords:
-    st.write(f"- {kw}")
-
-# 3. Content Helper
-st.subheader("✍️ Quick SEO Task")
-st.warning("Python Suggestion: Ek choti post likhen jiska Title ho: 'Best Way to Perform Istikhara in 2026'")
-
-if st.button("Generate SEO Report"):
-    st.write("Processing... Python aapki site ke saare pages scan kar raha hai.")
-    # Yahan mazeed automation add hoti jayegi
+# 2. Site Health Checker (Live)
+st.subheader("🖥️ Site Check")
+if st.button("Check my Site Status"):
+    res = requests.get("https://onlineistikharaexpert.com")
+    if res.status_code == 200:
+        st.balloons()
+        st.write("Aapki site live hai aur sahi kaam kar rahi hai!")
